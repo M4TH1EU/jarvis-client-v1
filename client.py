@@ -1,4 +1,3 @@
-import json
 import struct
 import sys
 import time
@@ -6,14 +5,11 @@ import time
 import pvporcupine
 import pyaudio
 import pyttsx3
-import requests
 import speech_recognition as sr
-from requests.structures import CaseInsensitiveDict
+
+import serverUtils
 
 no_voice_mode = False
-
-server_url = "http://127.0.0.1:5000"
-token = 'B*TyX&y7bDd5xLXYNw5iaN6X7%QAiqTQ#9nvtgMX3X2risrD64ew!*Q9*ky3PRvrSWYE6euykHycNzQqmViKo%XfoyTCSrJTFSUK*ycP2P$!Psn55iJT4@b4tdxw*XA!'  # test token (nothing private)
 
 
 def listen():
@@ -39,13 +35,13 @@ def listen():
                 keyword_index = porcupine.process(pcm)
 
                 if keyword_index >= 0:
-                    sentences.answer('yesSir')  # answer with something like "yes sir ?"
+                    speak(serverUtils)
+                    speak(serverUtils.get_random_sentence_with_id('yesSir'))
                     recognize_main()  # starts listening for your sentence
 
         except Exception as e:
             print("Oops! Une erreur est survenue/je n'ai pas compris")
             print(e)
-            # start_listening_for_hotword()
 
 
 def start_listening_for_hotword():  # initial keyword call
@@ -69,10 +65,10 @@ def recognize_main():  # Main reply call function
             data = data.lower()  # makes all voice entries show as lower case
 
         print("DATA : " + data)
-        speak(send_to_server(data))
+        speak(serverUtils.send_to_server(data))
 
     except sr.UnknownValueError:
-        sentences.answer('dontUnderstand')
+        speak(serverUtils.get_random_sentence_with_id('dontUnderstand'))
     except sr.RequestError as e:  # if you get a request error from Google speech engine
         print(
             "Erreur du service Google Speech Recognition ; {0}".format(e))
@@ -90,34 +86,8 @@ def speak(text):
     engine.runAndWait()  # waits for speech to finish and then continues with program
 
 
-def send_to_server(sentence):
-    try:
-        url_service = server_url + "/send"
-        headers = CaseInsensitiveDict()
-        headers["Authorization"] = token
-        headers["Content-Type"] = "application/json; charset=utf8"
-        sentence = json.dumps({"sentence": sentence})
-
-        return json.loads(
-            requests.post(url_service, headers=headers, data=sentence.encode("utf8")).content.decode("utf-8"))
-    except:
-        print("Error when calling HomeAssistant API")
-
-
-def get_hotword():
-    try:
-        url_service = server_url + "/hotword"
-        headers = CaseInsensitiveDict()
-        headers["Authorization"] = token
-        headers["Content-Type"] = "application/json; charset=utf8"
-
-        return json.loads(requests.get(url_service, headers=headers).content.decode("utf-8"))
-    except:
-        print("Error when calling the server API")
-
-
 if __name__ == '__main__':
-    hotword = get_hotword()
+    hotword = serverUtils.get_hotword()
     print("Getting hotword from server : " + hotword)
 
     while 1:  # This starts a loop so the speech recognition is always listening to you
