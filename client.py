@@ -35,7 +35,6 @@ def listen():
                 keyword_index = porcupine.process(pcm)
 
                 if keyword_index >= 0:
-                    speak(serverUtils.get_random_sentence_with_id('yesSir'))
                     recognize_main()  # starts listening for your sentence
 
         except Exception as e:
@@ -57,7 +56,9 @@ def recognize_main():  # Main reply call function
             data = input("Entrez phrase : ").lower()
         else:
             with sr.Microphone(device_index=0) as source:
-                audio = r.listen(source, timeout=3, phrase_time_limit=(7 if not no_voice_mode else 1))
+                r.adjust_for_ambient_noise(source=source, duration=0.5)
+                speak(serverUtils.get_random_sentence_with_id('yesSir'))
+                audio = r.listen(source, timeout=3, phrase_time_limit=(5 if not no_voice_mode else 1))
 
             # now uses Google speech recognition
             data = r.recognize_google(audio, language="fr-FR")
@@ -65,9 +66,6 @@ def recognize_main():  # Main reply call function
 
         print("DATA : " + data)
         speak(serverUtils.send_to_server(data))
-        print("Adjusting... (wait a second)")
-        r.adjust_for_ambient_noise(source=sr.Microphone(device_index=0), duration=0.5)
-        print("Adjusted!")
 
     except sr.UnknownValueError:
         speak(serverUtils.get_random_sentence_with_id('dontUnderstand'))
