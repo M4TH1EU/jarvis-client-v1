@@ -65,6 +65,9 @@ def recognize_main():  # Main reply call function
 
         print("DATA : " + data)
         speak(serverUtils.send_to_server(data))
+        print("Adjusting... (wait a second)")
+        r.adjust_for_ambient_noise(source=sr.Microphone(device_index=0), duration=0.5)
+        print("Adjusted!")
 
     except sr.UnknownValueError:
         speak(serverUtils.get_random_sentence_with_id('dontUnderstand'))
