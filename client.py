@@ -35,7 +35,6 @@ def listen():
                 keyword_index = porcupine.process(pcm)
 
                 if keyword_index >= 0:
-                    speak(serverUtils)
                     speak(serverUtils.get_random_sentence_with_id('yesSir'))
                     recognize_main()  # starts listening for your sentence
 
