@@ -1,12 +1,13 @@
+import os
 import struct
 import sys
+import threading
 import time
 
 import pvporcupine
 import pyaudio
 import pyttsx3
 import speech_recognition as sr
-
 import serverUtils
 
 no_voice_mode = False
@@ -86,13 +87,18 @@ def speak(text):
     engine.runAndWait()  # waits for speech to finish and then continues with program
 
 
+def start():
+    while 1:  # This starts a loop so the speech recognition is always listening to you
+        start_listening_for_hotword()
+
+
 if __name__ == '__main__':
     hotword = serverUtils.get_hotword()
     print("Getting hotword from server : " + hotword)
 
-    while 1:  # This starts a loop so the speech recognition is always listening to you
-        if 'no-voice' in sys.argv:
-            print("[WARN] No voice mode enabled")
-            no_voice_mode = True
+    if 'no-voice' in sys.argv:
+        print("[WARN] No voice mode enabled")
+        no_voice_mode = True
 
-        start_listening_for_hotword()
+    start()
+
