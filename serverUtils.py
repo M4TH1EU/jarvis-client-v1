@@ -1,4 +1,5 @@
 import json
+import os
 
 import requests
 import speech_recognition as sr
@@ -9,7 +10,7 @@ from requests.structures import CaseInsensitiveDict
 import client
 
 server_url = "http://127.0.0.1:5000"
-token = 'B*TyX&y7bDd5xLXYNw5iaN6X7%QAiqTQ#9nvtgMX3X2risrD64ew!*Q9*ky3PRvrSWYE6euykHycNzQqmViKo%XfoyTCSrJTFSUK*ycP2P$!Psn55iJT4@b4tdxw*XA!'  # test token (nothing private)
+token = os.getenv('JARVIS_API_KEY')
 
 
 def send_to_server(sentence):

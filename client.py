@@ -1,4 +1,5 @@
 import json
+import os
 import struct
 import sys
 import threading
@@ -12,17 +13,16 @@ import speech_recognition as sr
 from flask import request, Flask, jsonify
 
 import audioUtils
-import client
 import serverUtils
 
 global no_voice_mode
 app = Flask(__name__)
-token = 'B*TyX&y7bDd5xLXYNw5iaN6X7%QAiqTQ#9nvtgMX3X2risrD64ew!*Q9*ky3PRvrSWYE6euykHycNzQqmViKo%XfoyTCSrJTFSUK*ycP2P$!Psn55iJT4@b4tdxw*XA!'  # test token (nothing private)
+token = os.getenv('JARVIS_API_KEY')
 
 
 def check_api_key():
     token_given = request.headers.get('Authorization')
-    if token_given != token_given:
+    if token_given != token:
         flask.abort(401)
 
 
@@ -59,7 +59,7 @@ def speak():
 
     speech = get_body('speech')
 
-    threading.Thread(target=client.speak, args=[speech]).start()
+    threading.Thread(target=speak, args=[speech]).start()
 
     return jsonify("OK")
 
@@ -71,7 +71,7 @@ def record_microphone_and_send_back():
     record_for_seconds = int(get_body('record_for_seconds'))
     speech_before_input = get_sentence_in_body('speech_before_input')
 
-    client.speak(speech_before_input)
+    speak(speech_before_input)
 
     audioUtils.record(record_for_seconds)
 
