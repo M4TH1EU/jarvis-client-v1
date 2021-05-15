@@ -1,16 +1,81 @@
-import os
+import json
 import struct
 import sys
 import threading
 import time
 
+import flask
 import pvporcupine
 import pyaudio
 import pyttsx3
 import speech_recognition as sr
+from flask import request, Flask, jsonify
+
+import audioUtils
+import client
 import serverUtils
 
-no_voice_mode = False
+global no_voice_mode
+app = Flask(__name__)
+token = 'B*TyX&y7bDd5xLXYNw5iaN6X7%QAiqTQ#9nvtgMX3X2risrD64ew!*Q9*ky3PRvrSWYE6euykHycNzQqmViKo%XfoyTCSrJTFSUK*ycP2P$!Psn55iJT4@b4tdxw*XA!'  # test token (nothing private)
+
+
+def check_api_key():
+    token_given = request.headers.get('Authorization')
+    if token_given != token_given:
+        flask.abort(401)
+
+
+def get_body(name):
+    data = json.loads(request.data.decode('utf8'))
+    if not isinstance(data, dict):
+        data = json.loads(data)
+
+    data = str(data[name])
+    return data
+
+
+def get_sentence_in_body(name):
+    data = json.loads(str(request.data.decode('utf8')).replace('"', '\"').replace("\'", "'"))
+    if not isinstance(data, dict):
+        data = json.loads(data)
+
+    data = str(data[name]).lower()
+    return data
+
+
+@app.route("/input", methods=['POST'])
+def input_sentence():
+    check_api_key()
+
+    listen_for_seconds = int(get_body('listen_for_seconds'))
+    speech_before_input = get_sentence_in_body('speech_before_input')
+    return serverUtils.inputSentence(listen_for_seconds, speech_before_input)
+
+
+@app.route("/speak", methods=['POST'])
+def speak():
+    check_api_key()
+
+    speech = get_body('speech')
+
+    threading.Thread(target=client.speak, args=[speech]).start()
+
+    return jsonify("OK")
+
+
+@app.route("/record", methods=['POST'])
+def record_microphone_and_send_back():
+    check_api_key()
+
+    record_for_seconds = int(get_body('record_for_seconds'))
+    speech_before_input = get_sentence_in_body('speech_before_input')
+
+    client.speak(speech_before_input)
+
+    audioUtils.record(record_for_seconds)
+
+    return serverUtils.send_file_to_server(audioUtils.filename)
 
 
 def listen():
@@ -87,18 +152,21 @@ def speak(text):
     engine.runAndWait()  # waits for speech to finish and then continues with program
 
 
-def start():
+def startListening():
+    hotword = serverUtils.get_hotword()
+    print("Getting hotword from server : " + hotword)
+
+    global no_voice_mode
+    no_voice_mode = False
+    if 'no-voice' in sys.argv:
+        print("[WARN] No voice mode enabled")
+        no_voice_mode = True
+
     while 1:  # This starts a loop so the speech recognition is always listening to you
         start_listening_for_hotword()
 
 
 if __name__ == '__main__':
-    hotword = serverUtils.get_hotword()
-    print("Getting hotword from server : " + hotword)
-
-    if 'no-voice' in sys.argv:
-        print("[WARN] No voice mode enabled")
-        no_voice_mode = True
-
-    start()
-
+    thread = threading.Thread(target=startListening)
+    thread.start()
+    app.run(port=5001, debug=False, host='0.0.0.0', threaded=True)
