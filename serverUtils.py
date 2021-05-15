@@ -14,18 +14,18 @@ token = os.getenv('JARVIS_API_KEY')
 
 
 def send_to_server(sentence):
-    return callAPI('POST', '/send', {"sentence": sentence})
+    return call_api('POST', '/send', {"sentence": sentence})
 
 
 def get_random_sentence_with_id(sentence_id):
-    return callAPI('POST', '/sentence/get_by_id', {"sentenceId": sentence_id})
+    return call_api('POST', '/sentence/get_by_id', {"sentenceId": sentence_id})
 
 
 def get_hotword():
-    return callAPI(method='GET', url='/hotword')
+    return call_api(method='GET', url='/hotword')
 
 
-def callAPI(method, url, json_data=None):
+def call_api(method, url, json_data=None):
     if json_data is None:
         json_data = {}
 
@@ -47,7 +47,7 @@ def callAPI(method, url, json_data=None):
         return "error"
 
 
-def inputSentence(listen_for_seconds, speech_before_input):
+def input_sentence(listen_for_seconds, speech_before_input):
     r = sr.Recognizer()
 
     try:

@@ -50,7 +50,7 @@ def input_sentence():
 
     listen_for_seconds = int(get_body('listen_for_seconds'))
     speech_before_input = get_sentence_in_body('speech_before_input')
-    return serverUtils.inputSentence(listen_for_seconds, speech_before_input)
+    return serverUtils.input_sentence(listen_for_seconds, speech_before_input)
 
 
 @app.route("/speak", methods=['POST'])
@@ -152,7 +152,7 @@ def speak(text):
     engine.runAndWait()  # waits for speech to finish and then continues with program
 
 
-def startListening():
+def start_listening():
     hotword = serverUtils.get_hotword()
     print("Getting hotword from server : " + hotword)
 
@@ -167,6 +167,6 @@ def startListening():
 
 
 if __name__ == '__main__':
-    thread = threading.Thread(target=startListening)
+    thread = threading.Thread(target=start_listening)
     thread.start()
     app.run(port=5001, debug=False, host='0.0.0.0', threaded=True)
