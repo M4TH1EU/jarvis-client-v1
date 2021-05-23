@@ -117,12 +117,12 @@ def listen():
                     recognize_main()  # starts listening for your sentence
 
         except Exception as e:
-            print("Oops! Une erreur est survenue/je n'ai pas compris")
+            print("Oups! Une erreur est survenue/je n'ai pas compris")
             print(e)
 
 
 def start_listening_for_hotword():  # initial keyword call
-    print("Waiting for a keyword...")  # Prints to screen
+    print("Détection du mot 'Jarvis' en cours...")  # Prints to screen
     listen()
     time.sleep(1000000)  # keeps loop running
 
@@ -144,7 +144,7 @@ def recognize_main():  # Main reply call function
 
         threading.Thread(target=playsound(path + "\\sounds\\" + "listened.mp3")).start()
 
-        print("DATA : " + data)
+        print("Vous : " + data)
         speak_text(serverUtils.send_to_server(data))
 
     except sr.UnknownValueError:
@@ -157,7 +157,7 @@ def recognize_main():  # Main reply call function
 
 
 def speak_text(text):
-    print(text)
+    print("Jarvis : " + text)
     rate = 100  # Sets the default rate of speech
     engine = pyttsx3.init()  # Initialises the speech engine
     voices = engine.getProperty('voices')  # sets the properties for speech
@@ -177,10 +177,7 @@ def start_listening():
     while 1:  # This starts a loop so the speech recognition is always listening to you
         start_listening_for_hotword()
 
-
 if __name__ == '__main__':
-    print(os.getcwd())
-
     thread = threading.Thread(target=start_listening)
     thread.start()
     app.run(port=5001, debug=False, host='0.0.0.0', threaded=True)
