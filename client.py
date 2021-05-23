@@ -23,12 +23,21 @@ path = os.getcwd()
 
 
 def check_api_key():
+    """
+    Check the api key in the request and in the environnement variables
+    :return: true if the key is valid
+    """
     token_given = request.headers.get('Authorization')
     if token_given != token:
         flask.abort(401)
 
 
 def get_body(name):
+    """
+    Returns something that's inside the body
+    :param name: body arg name
+    :return:
+    """
     data = json.loads(request.data.decode('utf8'))
     if not isinstance(data, dict):
         data = json.loads(data)
@@ -38,6 +47,11 @@ def get_body(name):
 
 
 def get_sentence_in_body(name):
+    """
+    Returns the sentence in the body of a request
+    :param name: body arg name
+    :return: sentence in body
+    """
     data = json.loads(str(request.data.decode('utf8')).replace('"', '\"').replace("\'", "'"))
     if not isinstance(data, dict):
         data = json.loads(data)
@@ -48,6 +62,11 @@ def get_sentence_in_body(name):
 
 @app.route("/input", methods=['POST'])
 def input_sentence():
+    """
+    Listen for a given amount of seconds then return the recognized output with google stt.
+    :header listen_for_seconds: the amount of seconds you want to record
+    :header speech_before_input: what to say before recording input
+    """
     check_api_key()
 
     listen_for_seconds = int(get_body('listen_for_seconds'))
@@ -57,6 +76,12 @@ def input_sentence():
 
 @app.route("/speak", methods=['POST'])
 def speak():
+    """
+    Speak a given text
+
+    :header speech: is the text you want to speak
+    :return:
+    """
     check_api_key()
 
     speech = get_body('speech')
@@ -68,6 +93,11 @@ def speak():
 
 @app.route("/sound", methods=['POST'])
 def sound():
+    """
+    Play a sound
+
+    :header sound_name: is the filename with the extension (must be inside the sounds folder)
+    """
     check_api_key()
 
     sound_name = get_body('sound_name')
@@ -79,6 +109,10 @@ def sound():
 
 @app.route("/record", methods=['POST'])
 def record_microphone_and_send_back():
+    """
+    Record the microphone for a given amount
+    of seconds and return the recorded .wav file
+    """
     check_api_key()
 
     record_for_seconds = int(get_body('record_for_seconds'))
@@ -91,9 +125,14 @@ def record_microphone_and_send_back():
     return serverUtils.send_file_to_server(audioUtils.filename)
 
 
-def listen():
+def recognize_hotword():
+    """
+    Listen to the microphone with porcupine and wait
+    for the hotword, then proceed to the Google sentence
+    recognition
+    """
     if no_voice_mode:
-        recognize_main()  # starts listening for your sentence
+        recognize_sentence()  # starts listening for your sentence
     else:
         try:
             porcupine = pvporcupine.create(keywords=['jarvis'])
@@ -114,20 +153,27 @@ def listen():
                 keyword_index = porcupine.process(pcm)
 
                 if keyword_index >= 0:
-                    recognize_main()  # starts listening for your sentence
+                    recognize_sentence()  # starts listening for your sentence
 
         except Exception as e:
             print("Oups! Une erreur est survenue/je n'ai pas compris")
             print(e)
 
 
-def start_listening_for_hotword():  # initial keyword call
+def start_listening_for_hotword():
+    """
+     Initiates hotword recognition
+    """
+
     print("Détection du mot 'Jarvis' en cours...")  # Prints to screen
-    listen()
+    recognize_hotword()
     time.sleep(1000000)  # keeps loop running
 
 
-def recognize_main():  # Main reply call function
+def recognize_sentence():
+    """
+    Use Google STT to convert speech to text after the hotword has been detected
+    """
     r = sr.Recognizer()
 
     try:
@@ -153,10 +199,14 @@ def recognize_main():  # Main reply call function
         print(
             "Erreur du service Google Speech Recognition ; {0}".format(e))
 
-    listen()
+    recognize_hotword()
 
 
 def speak_text(text):
+    """
+    Speak text using TTS
+    :param text: the text to speak
+    """
     print("Jarvis : " + text)
     rate = 100  # Sets the default rate of speech
     engine = pyttsx3.init()  # Initialises the speech engine
@@ -168,15 +218,20 @@ def speak_text(text):
 
 
 def start_listening():
+    """
+    Call the hotword recognition method and set (or not) the no-voice mode
+    """
     global no_voice_mode
     no_voice_mode = False
     if 'no-voice' in sys.argv:
         print("[WARN] No voice mode enabled")
         no_voice_mode = True
 
-    while 1:  # This starts a loop so the speech recognition is always listening to you
+    while 1:
         start_listening_for_hotword()
 
+
+# Starts the whole client
 if __name__ == '__main__':
     thread = threading.Thread(target=start_listening)
     thread.start()
