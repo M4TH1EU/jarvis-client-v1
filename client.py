@@ -11,6 +11,7 @@ import pyaudio
 import pyttsx3
 import speech_recognition as sr
 from flask import request, Flask, jsonify
+from playsound import playsound
 
 import audioUtils
 import serverUtils
@@ -59,7 +60,18 @@ def speak():
 
     speech = get_body('speech')
 
-    threading.Thread(target=speak, args=[speech]).start()
+    threading.Thread(target=speak_text, args=[speech]).start()
+
+    return jsonify("OK")
+
+
+@app.route("/sound", methods=['POST'])
+def sound():
+    check_api_key()
+
+    sound_name = get_body('sound_name')
+
+    threading.Thread(target=playsound("sounds/" + sound_name)).start()
 
     return jsonify("OK")
 
@@ -71,7 +83,7 @@ def record_microphone_and_send_back():
     record_for_seconds = int(get_body('record_for_seconds'))
     speech_before_input = get_sentence_in_body('speech_before_input')
 
-    speak(speech_before_input)
+    speak_text(speech_before_input)
 
     audioUtils.record(record_for_seconds)
 
@@ -115,6 +127,8 @@ def start_listening_for_hotword():  # initial keyword call
 
 
 def recognize_main():  # Main reply call function
+    # threading.Thread(target=playsound("sounds/" + "listening.wav")).start()
+    playsound("D:\\PYTHON\\jarvis-client\\sounds\\" + "listening.mp3")
     r = sr.Recognizer()
 
     try:
@@ -123,25 +137,28 @@ def recognize_main():  # Main reply call function
         else:
             with sr.Microphone(device_index=0) as source:
                 r.adjust_for_ambient_noise(source=source, duration=0.5)
-                speak(serverUtils.get_random_sentence_with_id('yesSir'))
+                # speak_text(serverUtils.get_random_sentence_with_id('jarvis'))
                 audio = r.listen(source, timeout=3, phrase_time_limit=(5 if not no_voice_mode else 1))
 
             # now uses Google speech recognition
             data = r.recognize_google(audio, language="fr-FR")
             # data = data.lower()  # makes all voice entries show as lower case
 
+        playsound("D:\\PYTHON\\jarvis-client\\sounds\\" + "listened.mp3")
+
         print("DATA : " + data)
-        speak(serverUtils.send_to_server(data))
+        speak_text(serverUtils.send_to_server(data))
 
     except sr.UnknownValueError:
-        speak(serverUtils.get_random_sentence_with_id('dontUnderstand'))
+        speak_text(serverUtils.get_random_sentence_with_id('dont_understand'))
     except sr.RequestError as e:  # if you get a request error from Google speech engine
         print(
             "Erreur du service Google Speech Recognition ; {0}".format(e))
+
     listen()
 
 
-def speak(text):
+def speak_text(text):
     print(text)
     rate = 100  # Sets the default rate of speech
     engine = pyttsx3.init()  # Initialises the speech engine
@@ -153,9 +170,6 @@ def speak(text):
 
 
 def start_listening():
-    hotword = serverUtils.get_hotword()
-    print("Getting hotword from server : " + hotword)
-
     global no_voice_mode
     no_voice_mode = False
     if 'no-voice' in sys.argv:

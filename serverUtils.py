@@ -43,7 +43,7 @@ def call_api(method, url, json_data=None):
             return json.loads(
                 requests.post(url_service, headers=headers, data=json_data.encode("utf8")).content.decode("utf-8"))
     except:
-        return "Error when calling the server API"
+        return "Erreur lors de l'appel de l'API du serveur."
 
 
 def input_sentence(listen_for_seconds, speech_before_input):
@@ -55,7 +55,7 @@ def input_sentence(listen_for_seconds, speech_before_input):
         else:
             with sr.Microphone(device_index=0) as source:
                 r.adjust_for_ambient_noise(source=source, duration=0.5)
-                client.speak(speech_before_input)
+                client.speak_text(speech_before_input)
                 audio = r.listen(source, timeout=3,
                                  phrase_time_limit=(listen_for_seconds if not client.no_voice_mode else 1))
 
@@ -67,7 +67,7 @@ def input_sentence(listen_for_seconds, speech_before_input):
         return data
 
     except sr.UnknownValueError:
-        client.speak(get_random_sentence_with_id('dontUnderstand'))
+        client.speak_text(get_random_sentence_with_id('dontUnderstand'))
         return "Error"
     except sr.RequestError as e:  # if you get a request error from Google speech engine
         print(
