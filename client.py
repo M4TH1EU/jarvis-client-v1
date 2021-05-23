@@ -19,6 +19,7 @@ import serverUtils
 global no_voice_mode
 app = Flask(__name__)
 token = os.getenv('JARVIS_API_KEY')
+path = os.getcwd()
 
 
 def check_api_key():
@@ -127,8 +128,6 @@ def start_listening_for_hotword():  # initial keyword call
 
 
 def recognize_main():  # Main reply call function
-    # threading.Thread(target=playsound("sounds/" + "listening.wav")).start()
-    playsound("D:\\PYTHON\\jarvis-client\\sounds\\" + "listening.mp3")
     r = sr.Recognizer()
 
     try:
@@ -137,14 +136,13 @@ def recognize_main():  # Main reply call function
         else:
             with sr.Microphone(device_index=0) as source:
                 r.adjust_for_ambient_noise(source=source, duration=0.5)
-                # speak_text(serverUtils.get_random_sentence_with_id('jarvis'))
+                playsound(path + "\\sounds\\" + "listening.mp3")
                 audio = r.listen(source, timeout=3, phrase_time_limit=(5 if not no_voice_mode else 1))
 
             # now uses Google speech recognition
             data = r.recognize_google(audio, language="fr-FR")
-            # data = data.lower()  # makes all voice entries show as lower case
 
-        playsound("D:\\PYTHON\\jarvis-client\\sounds\\" + "listened.mp3")
+        threading.Thread(target=playsound(path + "\\sounds\\" + "listened.mp3")).start()
 
         print("DATA : " + data)
         speak_text(serverUtils.send_to_server(data))
@@ -181,6 +179,8 @@ def start_listening():
 
 
 if __name__ == '__main__':
+    print(os.getcwd())
+
     thread = threading.Thread(target=start_listening)
     thread.start()
     app.run(port=5001, debug=False, host='0.0.0.0', threaded=True)
