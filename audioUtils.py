@@ -8,6 +8,11 @@ filename = tempfile.gettempdir() + '\\recorded_song.wav'
 
 
 def record(record_for_seconds):
+    """
+    Record the mic for a given amount of seconds
+
+    :param record_for_seconds: the amount of second to record
+    """
     # Record in chunks of 1024 samples
     chunk = 1024
 
