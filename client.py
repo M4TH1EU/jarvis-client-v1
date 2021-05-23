@@ -119,7 +119,7 @@ def recognize_main():  # Main reply call function
 
     try:
         if no_voice_mode:
-            data = input("Entrez phrase : ").lower()
+            data = input("Entrez phrase : ")
         else:
             with sr.Microphone(device_index=0) as source:
                 r.adjust_for_ambient_noise(source=source, duration=0.5)
@@ -128,7 +128,7 @@ def recognize_main():  # Main reply call function
 
             # now uses Google speech recognition
             data = r.recognize_google(audio, language="fr-FR")
-            data = data.lower()  # makes all voice entries show as lower case
+            # data = data.lower()  # makes all voice entries show as lower case
 
         print("DATA : " + data)
         speak(serverUtils.send_to_server(data))

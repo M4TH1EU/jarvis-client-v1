@@ -43,8 +43,7 @@ def call_api(method, url, json_data=None):
             return json.loads(
                 requests.post(url_service, headers=headers, data=json_data.encode("utf8")).content.decode("utf-8"))
     except:
-        print("Error when calling the server API")
-        return "error"
+        return "Error when calling the server API"
 
 
 def input_sentence(listen_for_seconds, speech_before_input):
