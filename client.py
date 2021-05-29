@@ -86,7 +86,8 @@ def speak():
 
     speech = get_body('speech')
 
-    threading.Thread(target=speak_text, args=[speech]).start()
+    # threading.Thread(target=speak_text, args=[speech]).start()
+    speak_text(speech)
 
     return jsonify("OK")
 
@@ -102,7 +103,7 @@ def sound():
 
     sound_name = get_body('sound_name')
 
-    threading.Thread(target=playsound("sounds/" + sound_name)).start()
+    threading.Thread(target=playsound(path + "\\sounds\\" + sound_name)).start()
 
     return jsonify("OK")
 
