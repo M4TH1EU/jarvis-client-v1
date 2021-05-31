@@ -237,4 +237,4 @@ def start_listening():
 if __name__ == '__main__':
     thread = threading.Thread(target=start_listening)
     thread.start()
-    app.run(port=int(config.get_in_config("PORT")), debug=False, host='0.0.0.0', threaded=True)
+    app.run(port=config.get_in_config("PORT"), debug=False, host='0.0.0.0', threaded=True)
