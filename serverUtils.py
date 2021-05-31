@@ -20,10 +20,6 @@ def get_random_sentence_with_id(sentence_id):
     return call_api('POST', '/sentence/get_by_id', {"sentenceId": sentence_id})
 
 
-def get_hotword():
-    return call_api(method='GET', url='/hotword')
-
-
 def call_api(method, url, json_data=None):
     if json_data is None:
         json_data = {}
