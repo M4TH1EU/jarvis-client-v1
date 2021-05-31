@@ -1,0 +1,6 @@
+{
+    "API_KEY": "!secret API_KEY",
+    "NAME": "jarvis",
+    "PORT": 5001,
+    "SERVER_URL": "http://127.0.0.1:5000"
+}

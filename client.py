@@ -14,12 +14,13 @@ from flask import request, Flask, jsonify
 from playsound import playsound
 
 import audioUtils
+import config
+import pathfile
 import serverUtils
 
 global no_voice_mode
 app = Flask(__name__)
-token = os.getenv('JARVIS_API_KEY')
-path = os.getcwd()
+path = os.path.dirname(pathfile.__file__)
 
 
 def check_api_key():
@@ -28,7 +29,7 @@ def check_api_key():
     :return: true if the key is valid
     """
     token_given = request.headers.get('Authorization')
-    if token_given != token:
+    if token_given != config.get_in_config("JARVIS_API_KEY"):
         flask.abort(401)
 
 
@@ -136,7 +137,7 @@ def recognize_hotword():
         recognize_sentence()  # starts listening for your sentence
     else:
         try:
-            porcupine = pvporcupine.create(keywords=['jarvis'])
+            porcupine = pvporcupine.create(keywords=[config.get_in_config('NAME')])
             pa = pyaudio.PyAudio()
 
             audio_stream = pa.open(
@@ -166,7 +167,7 @@ def start_listening_for_hotword():
      Initiates hotword recognition
     """
 
-    print("Détection du mot 'Jarvis' en cours...")  # Prints to screen
+    print("Détection du mot '" + config.get_in_config("NAME") + "' en cours...")  # Prints to screen
     recognize_hotword()
     time.sleep(1000000)  # keeps loop running
 
@@ -208,7 +209,7 @@ def speak_text(text):
     Speak text using TTS
     :param text: the text to speak
     """
-    print("Jarvis : " + text)
+    print(config.get_in_config("NAME") + " : " + text)
     rate = 100  # Sets the default rate of speech
     engine = pyttsx3.init()  # Initialises the speech engine
     voices = engine.getProperty('voices')  # sets the properties for speech
@@ -236,4 +237,4 @@ def start_listening():
 if __name__ == '__main__':
     thread = threading.Thread(target=start_listening)
     thread.start()
-    app.run(port=5001, debug=False, host='0.0.0.0', threaded=True)
+    app.run(port=int(config.get_in_config("PORT")), debug=False, host='0.0.0.0', threaded=True)

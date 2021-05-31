@@ -1,5 +1,4 @@
 import json
-import os
 
 import requests
 import speech_recognition as sr
@@ -8,9 +7,9 @@ from requests.structures import CaseInsensitiveDict
 
 # from client import no_voice_mode, speak
 import client
+import config
 
-server_url = "http://127.0.0.1:5000"
-token = os.getenv('JARVIS_API_KEY')
+server_url = config.get_in_config("SERVER_URL")
 
 
 def send_to_server(sentence):
@@ -33,7 +32,7 @@ def call_api(method, url, json_data=None):
         url_service = server_url + url
 
         headers = CaseInsensitiveDict()
-        headers["Authorization"] = token
+        headers["Authorization"] = config.get_in_config("API_KEY")
         headers["Content-Type"] = "application/json; charset=utf8"
 
         if method == 'GET':
@@ -79,7 +78,7 @@ def send_file_to_server(path):
 
     headers = CaseInsensitiveDict()
     headers["Content-Type"] = "text/xml; charset=utf8"
-    headers["Authorization"] = token
+    headers["Authorization"] = config.get_in_config("API_KEY")
 
     data = open(path, 'rb').read()
 
