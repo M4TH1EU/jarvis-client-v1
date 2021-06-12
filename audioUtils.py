@@ -4,7 +4,7 @@ import wave
 
 import pyaudio
 
-filename = tempfile.gettempdir() + '\\recorded_song.wav'
+filename = tempfile.gettempdir() + '/recorded_song.wav'
 
 
 def record(record_for_seconds):

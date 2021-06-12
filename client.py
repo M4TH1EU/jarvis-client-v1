@@ -8,7 +8,6 @@ import time
 import flask
 import pvporcupine
 import pyaudio
-import pyttsx3
 import speech_recognition as sr
 from flask import request, Flask, jsonify
 from playsound import playsound
@@ -104,7 +103,7 @@ def sound():
 
     sound_name = get_body('sound_name')
 
-    threading.Thread(target=playsound(path + "\\sounds\\" + sound_name)).start()
+    threading.Thread(target=playsound(path + "/sounds/" + sound_name)).start()
 
     return jsonify("OK")
 
@@ -182,15 +181,15 @@ def recognize_sentence():
         if no_voice_mode:
             data = input("Entrez phrase : ")
         else:
-            with sr.Microphone(device_index=0) as source:
+            with sr.Microphone(device_index=7) as source:
                 r.adjust_for_ambient_noise(source=source, duration=0.5)
-                playsound(path + "\\sounds\\" + "listening.mp3")
+                playsound(path + "/sounds/" + "listening.mp3")
                 audio = r.listen(source, timeout=3, phrase_time_limit=(5 if not no_voice_mode else 1))
 
             # now uses Google speech recognition
             data = r.recognize_google(audio, language="fr-FR")
 
-        threading.Thread(target=playsound(path + "\\sounds\\" + "listened.mp3")).start()
+        threading.Thread(target=playsound(path + "/sounds/" + "listened.mp3")).start()
 
         print("Vous : " + data)
         speak_text(serverUtils.send_to_server(data))
@@ -210,6 +209,8 @@ def speak_text(text):
     :param text: the text to speak
     """
     print(config.get_in_config("NAME") + " : " + text)
+
+    """
     rate = 100  # Sets the default rate of speech
     engine = pyttsx3.init()  # Initialises the speech engine
     voices = engine.getProperty('voices')  # sets the properties for speech
@@ -217,7 +218,7 @@ def speak_text(text):
     engine.setProperty('rate', rate + 50)  # Adjusts the rate of speech
     engine.say(text)  # tells Python to speak variable 'text'
     engine.runAndWait()  # waits for speech to finish and then continues with program
-
+    """
 
 def start_listening():
     """
