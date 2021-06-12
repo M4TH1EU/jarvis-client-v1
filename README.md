@@ -19,3 +19,12 @@ french voices at least)* I only found out that Windows is the only one that has 
 p.ex)*.
 
 The server can run on anything that runs Python 3+  
+
+### Installation
+
+If not already installed, you will need Python 3.9, you can install it with theses commands.
+```shell
+sudo add-apt-repository ppa:deadsnakes/ppa
+sudo apt-get update
+sudo apt install python3.9 python3.9-dev python3.9-distutils
+```
