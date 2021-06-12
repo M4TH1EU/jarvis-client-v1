@@ -181,7 +181,7 @@ def recognize_sentence():
         if no_voice_mode:
             data = input("Entrez phrase : ")
         else:
-            with sr.Microphone(device_index=7) as source:
+            with sr.Microphone() as source:
                 r.adjust_for_ambient_noise(source=source, duration=0.5)
                 playsound(path + "/sounds/" + "listening.mp3")
                 audio = r.listen(source, timeout=3, phrase_time_limit=(5 if not no_voice_mode else 1))
