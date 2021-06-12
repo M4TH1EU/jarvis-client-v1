@@ -1,0 +1,7 @@
+flask
+pvporcupine
+PyAudio
+pyttsx3
+SpeechRecognition
+playsound
+requests
