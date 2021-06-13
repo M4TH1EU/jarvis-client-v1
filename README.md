@@ -60,3 +60,6 @@ sudo apt install \
   ./larynx-tts-voice-en-us-harvard-glow-tts_0.4.0_all.deb \
   sox
 ```
+
+You will need to install gruut aswell, follow the instructions [here](https://github.com/rhasspy/gruut#installation)  
+*(e.g to install french support do `pip install gruut[fr]`)*
