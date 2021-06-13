@@ -28,7 +28,7 @@ def check_api_key():
     :return: true if the key is valid
     """
     token_given = request.headers.get('Authorization')
-    if token_given != config.get_in_config("JARVIS_API_KEY"):
+    if token_given != config.get_in_config("API_KEY"):
         flask.abort(401)
 
 
