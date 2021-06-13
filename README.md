@@ -28,3 +28,20 @@ sudo add-apt-repository ppa:deadsnakes/ppa
 sudo apt-get update
 sudo apt install python3.9 python3.9-dev python3.9-distutils
 ```
+
+To install the TTS engine (Larynx) you must download 3 deb files from their [GitHub](https://github.com/rhasspy/larynx/releases/latest).  
+A list of the available voices and languages with samples is available [here](https://rhasspy.github.io/larynx/).  
+
+Download theses files according to your language :
+- larynx-tts-lang-xx-xx_V.V.V_all.deb *(e.g larynx-tts-lang-fr-fr_0.4.0_all.deb)*
+- larynx-tts-voice-xx-xx-name-engine-tts_V.V.V_all.deb *(e.g larynx-tts-voice-fr-fr-tom-glow-tts_0.4.0_all.deb)*
+- larynx-tts_V.V.V_amd64.deb **(or arm64 / armhf)** *(e.g larynx-tts_0.4.0_amd64.deb)*
+
+Then do the following commands (replace the filenames by yours)
+```shell
+sudo apt install libatlas3-base libopenblas-base # install some requirements for larynx
+sudo dpkg -i larynx-tts_0.4.0_amd64.deb 
+sudo dpkg -i larynx-tts-lang-fr-fr_0.4.0_all.deb
+sudo dpkg -i larynx-tts-voice-fr-fr-tom-glow-tts_0.4.0_all.deb
+larynx "Bonjour monsieur" --voice tom-glow_tts --quality high --output-dir wavs --denoiser-strength 0.001  # try it out
+```
