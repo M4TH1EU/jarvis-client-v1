@@ -57,5 +57,6 @@ Once downloaded, you can install the packages all at once with:
 sudo apt install \
   ./larynx-tts_0.4.0_amd64.deb \
   ./larynx-tts-lang-en-us_0.4.0_all.deb \
-  ./larynx-tts-voice-en-us-harvard-glow-tts_0.4.0_all.deb
+  ./larynx-tts-voice-en-us-harvard-glow-tts_0.4.0_all.deb \
+  sox
 ```
