@@ -210,7 +210,14 @@ def speak_text(text):
     """
     print(config.get_in_config("NAME") + " : " + text)
 
-    """
+    voice = config.get_in_config("LARYNX_VOICE")
+    quality = config.get_in_config("LARYNX_QUALITY")
+    denoiserstrength = config.get_in_config("LARYNX_DENOISER_STRENGTH")
+
+    os.system(
+        "larynx \"" + text + "\" --voice " + voice + " --quality " + quality + " --interactive --denoiser-strength " + str(denoiserstrength))
+
+    """ OLD PYTTSX3 DEPRECATED METHOD (using larynx now)
     rate = 100  # Sets the default rate of speech
     engine = pyttsx3.init()  # Initialises the speech engine
     voices = engine.getProperty('voices')  # sets the properties for speech
@@ -219,6 +226,7 @@ def speak_text(text):
     engine.say(text)  # tells Python to speak variable 'text'
     engine.runAndWait()  # waits for speech to finish and then continues with program
     """
+
 
 def start_listening():
     """
