@@ -29,6 +29,9 @@ sudo apt-get update
 sudo apt install python3.9 python3.9-dev python3.9-distutils
 ```
 
+### Install requirements 
+Run the command python -m pip3 install -r requirements.txt to install the basic requirements for the project.### Larynx TTS
+
 ### Larynx TTS
 Pre-built Debian packages are [available for download](https://github.com/rhasspy/larynx/releases/tag/v0.4.0).
 
@@ -63,3 +66,19 @@ sudo apt install \
 
 You will need to install gruut aswell, follow the instructions [here](https://github.com/rhasspy/gruut#installation)  
 *(e.g to install french support do `pip install gruut[fr]`)*
+
+# Errors
+Common errors than I personally encoured during this project, hope this can help you.
+## Error during installation of PyGObject:
+
+You're probably missing the development package. The package name varies by distribution, but it's the one containing `/usr/lib/pkgconfig/gobject-introspection-1.0.pc` (or `/usr/lib64/pkgconfig/gobject-introspection-1.0.pc` for some 64-bit distros):
+
+- Fedora, CentOS, RHEL, etc.: gobject-introspection-devel
+- Debian, Ubuntu, Mint, etc.: libgirepository1.0-dev
+- Arch: gobject-introspection
+- FreeBSD: gobject-introspection
+- Cygwin: libgirepository1.0-devel
+- msys2: mingw-w64-x86_64-gobject-introspection and/or mingw-w64-i686-gobject-introspection
+
+
+[Source](https://stackoverflow.com/a/18027346)
