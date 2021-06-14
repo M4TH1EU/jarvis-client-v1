@@ -2,6 +2,7 @@
     "API_KEY": "!secret API_KEY",
     "NAME": "jarvis",
     "PORT": 5001,
+    "MICROPHONE_NUMBER": "!secret MICROPHONE_NUMBER",
     "SERVER_URL": "http://127.0.0.1:5000",
     "LARYNX_VOICE": "tom-glow_tts",
     "LARYNX_QUALITY": "high",

@@ -181,7 +181,7 @@ def recognize_sentence():
         if no_voice_mode:
             data = input("Entrez phrase : ")
         else:
-            with sr.Microphone() as source:
+            with sr.Microphone(device_index=config.get_in_config('MICROPHONE_NUMBER')) as source:
                 r.adjust_for_ambient_noise(source=source, duration=0.5)
                 playsound(path + "/sounds/" + "listening.mp3")
                 audio = r.listen(source, timeout=3, phrase_time_limit=(5 if not no_voice_mode else 1))
@@ -215,7 +215,8 @@ def speak_text(text):
     denoiserstrength = config.get_in_config("LARYNX_DENOISER_STRENGTH")
 
     os.system(
-        "larynx \"" + text + "\" --voice " + voice + " --quality " + quality + " --interactive --denoiser-strength " + str(denoiserstrength))
+        "larynx \"" + text + "\" --voice " + voice + " --quality " + quality + " --interactive --denoiser-strength " + str(
+            denoiserstrength))
 
     """ OLD PYTTSX3 DEPRECATED METHOD (using larynx now)
     rate = 100  # Sets the default rate of speech
@@ -246,4 +247,6 @@ def start_listening():
 if __name__ == '__main__':
     thread = threading.Thread(target=start_listening)
     thread.start()
+
+    print(sr.Microphone.list_microphone_names())
     app.run(port=config.get_in_config("PORT"), debug=False, host='0.0.0.0', threaded=True)
