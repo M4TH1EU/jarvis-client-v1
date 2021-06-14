@@ -78,7 +78,11 @@ You're probably missing the development package. The package name varies by dist
 - Arch: gobject-introspection
 - FreeBSD: gobject-introspection
 - Cygwin: libgirepository1.0-devel
-- msys2: mingw-w64-x86_64-gobject-introspection and/or mingw-w64-i686-gobject-introspection
-
+- msys2: mingw-w64-x86_64-gobject-introspection and/or mingw-w64-i686-gobject-introspection  
 
 [Source](https://stackoverflow.com/a/18027346)
+
+### Error during installation of PyAudio:
+Do the following command `sudo apt-get install portaudio19-dev python-pyaudio`  
+[Source](https://ourcodeworld.com/articles/read/974/how-to-solve-installation-error-of-pyaudio-in-ubuntu-18-04-fatal-error-portaudio-h-file-not-found)
+
